@@ -139,6 +139,7 @@ The following queries are currently supported:
 | `"boosting"`            | `Boosting()`          |
 | `"constant_score"`      | `ConstantScore()`     |
 | `"dis_max"`             | `DisMax()`            |
+| `"nested"`              | `Nested()`            |
 
 ### Supported Aggregations
 
