@@ -34,6 +34,7 @@ type multiMatchParams struct {
 	MinMatch     string         `structs:"minimum_should_match,omitempty"`
 	ZeroTerms    ZeroTerms      `structs:"zero_terms_query,string,omitempty"`
 	Slp          uint16         `structs:"slop,omitempty"`
+	Name         string         `structs:"_name,omitempty"`
 }
 
 // MultiMatch creates a new query of type "multi_match"
@@ -161,6 +162,12 @@ func (q *MultiMatchQuery) Slop(n uint16) *MultiMatchQuery {
 // when using a stop filter.
 func (q *MultiMatchQuery) ZeroTermsQuery(s ZeroTerms) *MultiMatchQuery {
 	q.params.ZeroTerms = s
+	return q
+}
+
+// Name sets the query name
+func (q *MultiMatchQuery) Name(s string) *MultiMatchQuery {
+	q.params.Name = s
 	return q
 }
 

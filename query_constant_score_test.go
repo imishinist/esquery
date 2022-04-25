@@ -37,5 +37,21 @@ func TestConstantScore(t *testing.T) {
 				},
 			},
 		},
+		{
+			"constant_score query with name",
+			ConstantScore(Term("user", "kimchy")).Name("name"),
+			map[string]interface{}{
+				"constant_score": map[string]interface{}{
+					"filter": map[string]interface{}{
+						"term": map[string]interface{}{
+							"user": map[string]interface{}{
+								"value": "kimchy",
+							},
+						},
+					},
+					"_name": "name",
+				},
+			},
+		},
 	})
 }

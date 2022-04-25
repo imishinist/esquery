@@ -64,5 +64,17 @@ func TestMatch(t *testing.T) {
 				},
 			},
 		},
+		{
+			"match with name",
+			Match("title", "sample text").Name("name"),
+			map[string]interface{}{
+				"match": map[string]interface{}{
+					"title": map[string]interface{}{
+						"query": "sample text",
+						"_name": "name",
+					},
+				},
+			},
+		},
 	})
 }
