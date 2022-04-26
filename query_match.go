@@ -71,6 +71,7 @@ type matchParams struct {
 	MinMatch     string        `structs:"minimum_should_match,omitempty"`
 	ZeroTerms    ZeroTerms     `structs:"zero_terms_query,string,omitempty"`
 	Slp          uint16        `structs:"slop,omitempty"` // only relevant for match_phrase query
+	Name         string        `structs:"_name,omitempty"`
 }
 
 // Match creates a new query of type "match" with the provided field name.
@@ -199,6 +200,12 @@ func (q *MatchQuery) Slop(n uint16) *MatchQuery {
 // when using a stop filter.
 func (q *MatchQuery) ZeroTermsQuery(s ZeroTerms) *MatchQuery {
 	q.params.ZeroTerms = s
+	return q
+}
+
+// Name sets the query name
+func (q *MatchQuery) Name(s string) *MatchQuery {
+	q.params.Name = s
 	return q
 }
 

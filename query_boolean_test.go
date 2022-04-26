@@ -51,7 +51,8 @@ func TestBool(t *testing.T) {
 				MustNot(Range("age").Gte(10).Lte(20)).
 				Should(Term("tag", "wow"), Term("tag", "elasticsearch")).
 				MinimumShouldMatch(1).
-				Boost(1.1),
+				Boost(1.1).
+				Name("name"),
 			map[string]interface{}{
 				"bool": map[string]interface{}{
 					"must": []map[string]interface{}{
@@ -100,6 +101,7 @@ func TestBool(t *testing.T) {
 					},
 					"minimum_should_match": 1,
 					"boost":                1.1,
+					"_name":                "name",
 				},
 			},
 		},

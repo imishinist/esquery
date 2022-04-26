@@ -8,12 +8,19 @@ import (
 // https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-exists-query.html
 type ExistsQuery struct {
 	// Field is the name of the field to check for existence
-	Field string `structs:"field"`
+	Field     string `structs:"field"`
+	QueryName string `structs:"_name,omitempty"`
 }
 
 // Exists creates a new query of type "exists" on the provided field.
 func Exists(field string) *ExistsQuery {
-	return &ExistsQuery{field}
+	return &ExistsQuery{Field: field}
+}
+
+// Name sets the query name
+func (q *ExistsQuery) Name(name string) *ExistsQuery {
+	q.QueryName = name
+	return q
 }
 
 // Map returns a map representation of the query, thus implementing the
@@ -33,6 +40,8 @@ type IDsQuery struct {
 	IDs struct {
 		// Values is the list of ID values
 		Values []string `structs:"values"`
+
+		Name string `structs:"_name,omitempty"`
 	} `structs:"ids"`
 }
 
@@ -40,6 +49,12 @@ type IDsQuery struct {
 func IDs(vals ...string) *IDsQuery {
 	q := &IDsQuery{}
 	q.IDs.Values = vals
+	return q
+}
+
+// Name sets the query name
+func (q *IDsQuery) Name(s string) *IDsQuery {
+	q.IDs.Name = s
 	return q
 }
 
@@ -64,6 +79,8 @@ type prefixQueryParams struct {
 
 	// Rewrite is the method used to rewrite the query
 	Rewrite string `structs:"rewrite,omitempty"`
+
+	Name string `structs:"_name,omitempty"`
 }
 
 // Prefix creates a new query of type "prefix", on the provided field and using
@@ -78,6 +95,12 @@ func Prefix(field, value string) *PrefixQuery {
 // Rewrite sets the rewrite method for the query
 func (q *PrefixQuery) Rewrite(s string) *PrefixQuery {
 	q.params.Rewrite = s
+	return q
+}
+
+// Name sets the query name
+func (q *PrefixQuery) Name(s string) *PrefixQuery {
+	q.params.Name = s
 	return q
 }
 
@@ -109,6 +132,7 @@ type rangeQueryParams struct {
 	Relation RangeRelation `structs:"relation,string,omitempty"`
 	TimeZone string        `structs:"time_zone,omitempty"`
 	Boost    float32       `structs:"boost,omitempty"`
+	Name     string        `structs:"_name,omitempty"`
 }
 
 // Range creates a new query of type "range" on the provided field
@@ -163,6 +187,12 @@ func (a *RangeQuery) TimeZone(zone string) *RangeQuery {
 // Boost sets the boost value of the query.
 func (a *RangeQuery) Boost(b float32) *RangeQuery {
 	a.params.Boost = b
+	return a
+}
+
+// Name sets the query name
+func (a *RangeQuery) Name(s string) *RangeQuery {
+	a.params.Name = s
 	return a
 }
 
@@ -222,6 +252,7 @@ type regexpQueryParams struct {
 	Flags                 string `structs:"flags,omitempty"`
 	MaxDeterminizedStates uint16 `structs:"max_determinized_states,omitempty"`
 	Rewrite               string `structs:"rewrite,omitempty"`
+	Name                  string `structs:"_name,omitempty"`
 }
 
 // Regexp creates a new query of type "regexp" on the provided field and using
@@ -261,6 +292,12 @@ func (q *RegexpQuery) MaxDeterminizedStates(m uint16) *RegexpQuery {
 // Rewrite sets the method used to rewrite the query.
 func (q *RegexpQuery) Rewrite(r string) *RegexpQuery {
 	q.params.Rewrite = r
+	return q
+}
+
+// Name sets the query name
+func (q *RegexpQuery) Name(s string) *RegexpQuery {
+	q.params.Name = s
 	return q
 }
 
@@ -313,6 +350,7 @@ type fuzzyQueryParams struct {
 	PrefixLength   uint16 `structs:"prefix_length,omitempty"`
 	Transpositions *bool  `structs:"transpositions,omitempty"`
 	Rewrite        string `structs:"rewrite,omitempty"`
+	Name           string `structs:"_name,omitempty"`
 }
 
 // Fuzzy creates a new query of type "fuzzy" on the provided field and using
@@ -364,6 +402,12 @@ func (q *FuzzyQuery) Rewrite(s string) *FuzzyQuery {
 	return q
 }
 
+// Name sets the query name
+func (q *FuzzyQuery) Name(s string) *FuzzyQuery {
+	q.params.Name = s
+	return q
+}
+
 // Map returns a map representation of the query, thus implementing the
 // Mappable interface.
 func (q *FuzzyQuery) Map() map[string]interface{} {
@@ -386,6 +430,7 @@ type TermQuery struct {
 type termQueryParams struct {
 	Value interface{} `structs:"value"`
 	Boost float32     `structs:"boost,omitempty"`
+	Name  string      `structs:"_name,omitempty"`
 }
 
 // Term creates a new query of type "term" on the provided field and using the
@@ -411,6 +456,12 @@ func (q *TermQuery) Boost(b float32) *TermQuery {
 	return q
 }
 
+// Name sets the query name
+func (q *TermQuery) Name(s string) *TermQuery {
+	q.params.Name = s
+	return q
+}
+
 // Map returns a map representation of the query, thus implementing the
 // Mappable interface.
 func (q *TermQuery) Map() map[string]interface{} {
@@ -429,6 +480,7 @@ type TermsQuery struct {
 	field  string
 	values []interface{}
 	boost  float32
+	name   string
 }
 
 // Terms creates a new query of type "terms" on the provided field, and
@@ -452,12 +504,21 @@ func (q *TermsQuery) Boost(b float32) *TermsQuery {
 	return q
 }
 
+// Name sets the query name
+func (q *TermsQuery) Name(s string) *TermsQuery {
+	q.name = s
+	return q
+}
+
 // Map returns a map representation of the query, thus implementing the
 // Mappable interface.
 func (q TermsQuery) Map() map[string]interface{} {
 	innerMap := map[string]interface{}{q.field: q.values}
 	if q.boost > 0 {
 		innerMap["boost"] = q.boost
+	}
+	if q.name != "" {
+		innerMap["_name"] = q.name
 	}
 
 	return map[string]interface{}{"terms": innerMap}

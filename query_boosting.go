@@ -9,6 +9,8 @@ type BoostingQuery struct {
 	Neg Mappable
 	// NegBoost is the negative boost value.
 	NegBoost float32
+	// QueryName is the name used to determine which query matched.
+	QueryName string
 }
 
 // Boosting creates a new compound query of type "boosting".
@@ -34,14 +36,24 @@ func (q *BoostingQuery) NegativeBoost(b float32) *BoostingQuery {
 	return q
 }
 
+// Name sets the query name
+func (q *BoostingQuery) Name(s string) *BoostingQuery {
+	q.QueryName = s
+	return q
+}
+
 // Map returns a map representation of the boosting query, thus implementing
 // the Mappable interface.
 func (q *BoostingQuery) Map() map[string]interface{} {
+	inner := map[string]interface{}{
+		"positive":       q.Pos.Map(),
+		"negative":       q.Neg.Map(),
+		"negative_boost": q.NegBoost,
+	}
+	if q.QueryName != "" {
+		inner["_name"] = q.QueryName
+	}
 	return map[string]interface{}{
-		"boosting": map[string]interface{}{
-			"positive":       q.Pos.Map(),
-			"negative":       q.Neg.Map(),
-			"negative_boost": q.NegBoost,
-		},
+		"boosting": inner,
 	}
 }
