@@ -52,9 +52,7 @@ func (i *InnerHitsQuery) Map() map[string]interface{} {
 		m["name"] = i.name
 	}
 
-	return map[string]interface{}{
-		"inner_hits": m,
-	}
+	return m
 }
 
 type NestedQuery struct {
